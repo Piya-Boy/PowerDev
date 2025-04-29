@@ -30,5 +30,13 @@ export const testimonials = [
     content: "The e-commerce platform PowerDev built for us has significantly expanded our customer base by making online shopping accessible to everyone. Their technical skills are matched by their empathy and understanding of diverse user needs.",
     image: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
     profile_link: "https://github.com/davidchen"
+  },
+  {
+    id: 5,
+    name: "John Doe",
+    position: "CEO, TechSolutions",
+    content: "PowerDev delivered an e-learning platform that truly works for everyone. Their understanding of accessibility needs combined with technical excellence resulted in a product that's been praised by our diverse student body. I'm impressed by their innovation.",
+    image: "https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    profile_link: "https://github.com/johndoe"
   }
 ]; 
