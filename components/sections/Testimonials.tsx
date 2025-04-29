@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Quote } from 'lucide-react';
 import { testimonials } from '@/data/testimonials';
+import Link from 'next/link';
 
 const Testimonials = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -74,81 +75,126 @@ const Testimonials = () => {
         </motion.div>
 
         <div className="relative">
-          <Button 
-            variant="outline" 
-            size="icon" 
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 border-[hsl(var(--neon-blue))] text-[hsl(var(--neon-blue))] hover:bg-[hsl(var(--neon-blue)/0.1)] -ml-4 hidden md:flex"
-            onClick={showPrev}
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <ChevronLeft className="h-6 w-6" />
-          </Button>
+            <Button 
+              variant="outline" 
+              size="icon" 
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 border-[hsl(var(--neon-blue))] text-[hsl(var(--neon-blue))] hover:bg-[hsl(var(--neon-blue)/0.1)] -ml-4 hidden md:flex"
+              onClick={showPrev}
+            >
+              <ChevronLeft className="h-6 w-6" />
+            </Button>
+          </motion.div>
           
           <div className="overflow-hidden py-8">
             <motion.div
               key={currentIndex}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -100 }}
+              transition={{ 
+                type: "spring",
+                stiffness: 300,
+                damping: 30
+              }}
               className="flex justify-center"
             >
-              <Card className="max-w-4xl border-0 bg-[#131628] animated-gradient-border" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+              <Card className="max-w-4xl border-0 bg-[#131628] animated-gradient-border cursor-pointer hover:bg-[#131628]/80 transition-colors" 
+                onMouseEnter={() => setIsHovered(true)} 
+                onMouseLeave={() => setIsHovered(false)}
+                onClick={() => window.open(testimonials[currentIndex].profile_link, '_blank')}
+              >
                 <CardContent className="p-8">
-                  <div className="flex flex-col md:flex-row gap-6 items-center">
-                    <div className="w-24 h-24 rounded-full overflow-hidden flex-shrink-0 border-2 border-[hsl(var(--neon-blue))]">
+                  <motion.div 
+                    className="flex flex-col md:flex-row gap-6 items-center"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <motion.div 
+                      className="w-24 h-24 rounded-full overflow-hidden flex-shrink-0 border-2 border-[hsl(var(--neon-blue))]"
+                      whileHover={{ scale: 1.1 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                    >
                       <img 
                         src={testimonials[currentIndex].image} 
                         alt={testimonials[currentIndex].name} 
                         className="w-full h-full object-cover"
                       />
-                    </div>
+                    </motion.div>
                     <div className="flex-1">
-                      <Quote className="w-8 h-8 text-[hsl(var(--neon-blue))/0.3] mb-2" />
-                      <p className="text-lg text-gray-300 italic mb-4">"{testimonials[currentIndex].content}"</p>
-                      <div>
-                        <h3 className="text-xl font-semibold text-white">{testimonials[currentIndex].name}</h3>
-                        <p className="text-[hsl(var(--neon-blue))]">{testimonials[currentIndex].position}</p>
-                      </div>
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.4 }}
+                      >
+                        <Quote className="w-8 h-8 text-[hsl(var(--neon-blue))/0.3] mb-2" />
+                        <p className="text-lg text-gray-300 italic mb-4">"{testimonials[currentIndex].content}"</p>
+                        <div>
+                          <h3 className="text-xl font-semibold text-white">{testimonials[currentIndex].name}</h3>
+                          <p className="text-[hsl(var(--neon-blue))]">{testimonials[currentIndex].position}</p>
+                        </div>
+                      </motion.div>
                     </div>
-                  </div>
+                  </motion.div>
                 </CardContent>
               </Card>
             </motion.div>
           </div>
           
-          <Button 
-            variant="outline" 
-            size="icon" 
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 border-[hsl(var(--neon-blue))] text-[hsl(var(--neon-blue))] hover:bg-[hsl(var(--neon-blue)/0.1)] -mr-4 hidden md:flex"
-            onClick={showNext}
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <ChevronRight className="h-6 w-6" />
-          </Button>
+            <Button 
+              variant="outline" 
+              size="icon" 
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 border-[hsl(var(--neon-blue))] text-[hsl(var(--neon-blue))] hover:bg-[hsl(var(--neon-blue)/0.1)] -mr-4 hidden md:flex"
+              onClick={showNext}
+            >
+              <ChevronRight className="h-6 w-6" />
+            </Button>
+          </motion.div>
         </div>
         
         <div className="flex justify-center gap-2 mt-4 md:hidden">
-          <Button 
-            variant="outline" 
-            size="icon" 
-            className="border-[hsl(var(--neon-blue))] text-[hsl(var(--neon-blue))] hover:bg-[hsl(var(--neon-blue)/0.1)]"
-            onClick={showPrev}
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <ChevronLeft className="h-5 w-5" />
-          </Button>
-          <Button 
-            variant="outline" 
-            size="icon" 
-            className="border-[hsl(var(--neon-blue))] text-[hsl(var(--neon-blue))] hover:bg-[hsl(var(--neon-blue)/0.1)]"
-            onClick={showNext}
+            <Button 
+              variant="outline" 
+              size="icon" 
+              className="border-[hsl(var(--neon-blue))] text-[hsl(var(--neon-blue))] hover:bg-[hsl(var(--neon-blue)/0.1)]"
+              onClick={showPrev}
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+          </motion.div>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <ChevronRight className="h-5 w-5" />
-          </Button>
+            <Button 
+              variant="outline" 
+              size="icon" 
+              className="border-[hsl(var(--neon-blue))] text-[hsl(var(--neon-blue))] hover:bg-[hsl(var(--neon-blue)/0.1)]"
+              onClick={showNext}
+            >
+              <ChevronRight className="h-5 w-5" />
+            </Button>
+          </motion.div>
         </div>
         
         <div className="flex justify-center gap-2 mt-6">
           {testimonials.map((_, index) => (
-            <button
+            <motion.button
               key={index}
+              whileHover={{ scale: 1.2 }}
+              whileTap={{ scale: 0.8 }}
               className={`w-3 h-3 rounded-full ${
                 index === currentIndex 
                   ? "bg-[hsl(var(--neon-blue))]" 
