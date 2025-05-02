@@ -3,14 +3,13 @@ import ProjectDetailsClient from './ProjectDetailsClient';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 
-interface PageProps {
-  params: {
-    id: string;
-  };
+type Props = {
+  params: { id: string };
   searchParams: { [key: string]: string | string[] | undefined };
-}
+};
 
-export default async function ProjectPage({ params }: PageProps) {
+export default async function ProjectPage(props: Props) {
+  const { params } = props;
   const project = projects.find((p) => p.id.toString() === params.id);
 
   if (!project) {
@@ -29,7 +28,8 @@ export async function generateStaticParams() {
 
 export const dynamicParams = false;
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const { params } = props;
   const project = projects.find((p) => p.id.toString() === params.id);
   if (!project) return {};
 
