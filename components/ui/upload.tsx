@@ -5,11 +5,14 @@ import { useDropzone } from "react-dropzone"
 import { cn } from "@/lib/utils"
 import { Button } from "./button"
 
-interface FileUploadProps extends React.HTMLAttributes<HTMLDivElement> {
-  className?: string
+type FileUploadBaseProps = {
   value?: string
   onChange?: (url: string) => void
   onError?: (error: string) => void
+}
+
+interface FileUploadProps extends FileUploadBaseProps, Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
+  className?: string
 }
 
 export function FileUpload({
