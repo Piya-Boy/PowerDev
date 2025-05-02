@@ -5,11 +5,12 @@ import { motion, useAnimation, useMotionValue, useTransform } from 'framer-motio
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Quote } from 'lucide-react';
-import { testimonials } from '@/data/testimonials';
+import forms from '@/data/forms.json';
 import Link from 'next/link';
 
 const Testimonials = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const testimonials = forms.forms;
   
   const showPrev = () => {
     setCurrentIndex((prevIndex) => (prevIndex === 0 ? testimonials.length - 1 : prevIndex - 1));
@@ -135,7 +136,9 @@ const Testimonials = () => {
                         <p className="text-lg text-gray-300 italic mb-4">"{testimonials[currentIndex].content}"</p>
                         <div>
                           <h3 className="text-xl font-semibold text-white">{testimonials[currentIndex].name}</h3>
-                          <p className="text-[hsl(var(--neon-blue))]">{testimonials[currentIndex].position}</p>
+                          <p className="text-[hsl(var(--neon-blue))]">
+                            {testimonials[currentIndex].position.join(' & ')}
+                          </p>
                         </div>
                       </motion.div>
                     </div>

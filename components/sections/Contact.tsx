@@ -31,9 +31,13 @@ const Contact = () => {
   });
 
   const onSubmit = (data: FormValues) => {
-    // In a real implementation, this would send the form data to a server
-    console.log(data);
-    toast.success('Message sent successfully! We\'ll be in touch soon.');
+    const { name, email, message } = data;
+    const subject = `Contact Form Submission from ${name}`;
+    const body = `Name: ${name}%0D%0AEmail: ${email}%0D%0A%0D%0AMessage: ${message}`;
+    
+    window.location.href = `mailto:powerdev.tech@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    
+    toast.success('Opening email client...');
     form.reset();
   };
 
@@ -69,7 +73,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="text-lg font-semibold mb-1 text-white">Email</h4>
-                  <p className="text-gray-300">info@powerdev.tech</p>
+                  <p className="text-gray-300">powerdev.tech@gmail.com</p>
                 </div>
               </div>
               
@@ -79,7 +83,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="text-lg font-semibold mb-1 text-white">Phone</h4>
-                  <p className="text-gray-300">+1 (555) 123-4567</p>
+                  <p className="text-gray-300"></p>
                 </div>
               </div>
               
@@ -93,6 +97,7 @@ const Contact = () => {
                     <a href="#" className="text-gray-300 hover:text-white transition-colors">Twitter</a>
                     <a href="#" className="text-gray-300 hover:text-white transition-colors">LinkedIn</a>
                     <a href="#" className="text-gray-300 hover:text-white transition-colors">GitHub</a>
+                    <a href="https://www.facebook.com/profile.php?id=61575847232619" className="text-gray-300 hover:text-white transition-colors">Facebook</a>
                   </div>
                 </div>
               </div>
@@ -156,7 +161,7 @@ const Contact = () => {
                               placeholder="How can we help you?" 
                               {...field} 
                               rows={5}
-                              className="bg-[hsl(var(--background))] border-[hsl(var(--border))]"
+                              className="bg-[hsl(var(--background))] border-[hsl(var(--border))] text-white"
                             />
                           </FormControl>
                           <FormMessage />
@@ -166,7 +171,7 @@ const Contact = () => {
                     
                     <Button 
                       type="submit" 
-                      className="w-full bg-[hsl(var(--neon-blue))] text-black hover:bg-[hsl(var(--neon-blue)/0.8)] cyberpunk-glow"
+                      className="w-full bg-[hsl(var(--neon-blue))] text-black hover:bg-[hsl(var(--neon-blue)/0.8)] cyberpunk-glow transition-all duration-300 ease-in-out cursor-pointer"
                     >
                       Send Message
                     </Button>

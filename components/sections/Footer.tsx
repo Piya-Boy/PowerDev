@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Mail, Github, Linkedin, Twitter } from 'lucide-react';
+import { Mail, Github, Linkedin, Twitter, Facebook } from 'lucide-react';
 import Link from 'next/link';
 
 const Footer = () => {
@@ -28,6 +28,12 @@ const Footer = () => {
               <Link href="https://twitter.com" target="_blank" rel="noopener noreferrer">
                 <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
                   <Twitter className="h-5 w-5" />
+                </Button>
+              </Link>
+              {/* facebook */}
+              <Link href="https://www.facebook.com/profile.php?id=61575847232619" target="_blank" rel="noopener noreferrer">
+                <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
+                  <Facebook className="h-5 w-5" />
                 </Button>
               </Link>
             </div>
@@ -58,7 +64,7 @@ const Footer = () => {
             <h3 className="text-xl font-bold text-white">Contact Us</h3>
             <div className="flex items-center space-x-2 text-gray-400">
               <Mail className="h-5 w-5" />
-              <span>contact@powerdev.com</span>
+              <span>powerdev.tech@gmail.com</span>
             </div>
             <Link href="#contact">
               <Button className="mt-4 bg-[hsl(var(--neon-green))] text-black hover:bg-[hsl(var(--neon-green)/0.8)]">
