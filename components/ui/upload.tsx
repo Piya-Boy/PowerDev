@@ -11,7 +11,9 @@ type FileUploadBaseProps = {
   onError?: (error: string) => void
 }
 
-interface FileUploadProps extends FileUploadBaseProps, Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
+type DivProps = Omit<React.HTMLAttributes<HTMLDivElement>, keyof FileUploadBaseProps>
+
+interface FileUploadProps extends FileUploadBaseProps, DivProps {
   className?: string
 }
 
