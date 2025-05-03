@@ -118,7 +118,15 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center space-x-2">
-            <Image src="images/full-logo-2.png" alt="PowerDevs Logo" width={120} height={40} className="h-10 w-auto" />
+            <Image 
+              src="/images/full-logo-2.png" 
+              alt="Logo" 
+              width={120}
+              height={40}
+              style={{ width: 'auto', height: '40px' }}
+              priority
+              className="h-10 w-auto"
+            />
           </Link>
 
           {/* Desktop Navigation */}

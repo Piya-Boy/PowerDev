@@ -14,11 +14,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { ThemeProvider } from '@/components/ThemeProvider';
-import { FileUpload } from "@/components/ui/upload"
 import { motion, AnimatePresence } from "framer-motion";
-import { X } from "lucide-react"
+import { X, ImageIcon, UploadIcon } from "lucide-react";
 import { useDropzone } from 'react-dropzone';
-import { ImageIcon, UploadIcon } from 'lucide-react';
+import { useToast } from "../../components/ui/use-toast";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -241,6 +240,8 @@ export default function FormsPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [formToDelete, setFormToDelete] = useState<Testimonial | null>(null);
 
+  const { toast } = useToast();
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -252,9 +253,11 @@ export default function FormsPage() {
     },
   });
 
+  const { reset } = form;
+
   useEffect(() => {
     loadForms();
-  }, []);
+  }, [open, deleteDialogOpen]);
 
   const loadForms = async () => {
     try {
@@ -277,16 +280,15 @@ export default function FormsPage() {
       formData.append('content', values.content);
       formData.append('profile_link', values.profile_link);
       
-      // Log the values being sent
-    //   console.log('Submitting form with values:', values);
-    //   console.log('Image file:', values.image);
       if (values.image) {
-        // console.log('Image file:', values.image);
         formData.append('image', values.image);
       }
       
       if (editingId) {
         formData.append('id', editingId);
+        if (imagePreview && !values.image) {
+          formData.append('existingImage', imagePreview);
+        }
       }
       
       const response = await fetch(url, {
@@ -297,19 +299,30 @@ export default function FormsPage() {
       if (!response.ok) {
         const error = await response.json();
         console.error('Server error:', error);
-        return;
+        throw new Error(error.error || 'Failed to submit form');
       }
 
       const result = await response.json();
-    //   console.log('Server response:', result);
-
-      await loadForms();
-      form.reset();
-      setEditingId(null);
-      setOpen(false);
+      console.log('Form submitted successfully:', result);
+      
+      // Reset form and close dialog
+      reset();
       setImagePreview(null);
+      setEditingId(null);
+      setOpen(false); // Close the dialog
+      loadForms();
+      
+      toast({
+        title: 'Success',
+        description: editingId ? 'Form updated successfully' : 'Form created successfully',
+      });
     } catch (error) {
-      console.error('Error saving form:', error);
+      console.error('Error submitting form:', error);
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'Failed to submit form',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -345,15 +358,12 @@ export default function FormsPage() {
   const handleImageChange = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles?.length > 0) {
       const file = acceptedFiles[0];
-    //   console.log('Selected file:', file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
-        // console.log('Image preview set');
       };
       reader.readAsDataURL(file);
       form.setValue('image', file);
-      // console.log('Form image value set');
     }
   }, [form]);
 
@@ -389,8 +399,16 @@ export default function FormsPage() {
                   <Button 
                     className="bg-primary text-white hover:bg-primary/80 cursor-pointer"
                     onClick={() => {
-                      form.reset();
+                      reset({
+                        name: '',
+                        position: [],
+                        content: '',
+                        image: null,
+                        profile_link: '',
+                      });
+                      setImagePreview(null);
                       setEditingId(null);
+                      setOpen(true);
                     }}
                   >
                     Add New Testimonial
@@ -693,13 +711,21 @@ export default function FormsPage() {
                           ))}
                         </div>
                         <motion.p 
-                          className="text-purple-200/80 text-sm mb-4 line-clamp-3"
-                          whileHover={{ height: "auto", lineClamp: "unset" }}
+                          className="text-purple-200/80 text-sm mb-4"
+                          style={{ 
+                            display: '-webkit-box',
+                            WebkitLineClamp: 3,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden'
+                          }}
+                          whileHover={{ 
+                            WebkitLineClamp: 'unset',
+                            height: 'auto'
+                          }}
                         >
                           {form.content}
                         </motion.p>
                         <motion.a
-
                           href={form.profile_link}
                           target="_blank"
                           rel="noopener noreferrer"
