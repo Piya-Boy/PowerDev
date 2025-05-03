@@ -41,11 +41,11 @@ const uploadToCloudinary = async (file: File) => {
 };
 
 export async function GET(
-  request: Request,
-  context: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: { id: string } }
 ) {
   try {
-    const id = context.params.id;
+    const id = params.id;
     const filePath = path.join(process.cwd(), 'data', 'forms.json');
     const data = await fs.readFile(filePath, 'utf-8');
     const { forms } = JSON.parse(data);
@@ -63,11 +63,11 @@ export async function GET(
 }
 
 export async function PUT(
-  request: Request,
-  context: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: { id: string } }
 ) {
   try {
-    const id = context.params.id;
+    const id = params.id;
     const formData = await request.formData();
     const name = formData.get('name') as string;
     const position = JSON.parse(formData.get('position') as string);
@@ -122,11 +122,11 @@ export async function PUT(
 }
 
 export async function DELETE(
-  request: Request,
-  context: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: { id: string } }
 ) {
   try {
-    const id = context.params.id;
+    const id = params.id;
     const filePath = path.join(process.cwd(), 'data', 'forms.json');
     const data = await fs.readFile(filePath, 'utf-8');
     const { forms } = JSON.parse(data);
