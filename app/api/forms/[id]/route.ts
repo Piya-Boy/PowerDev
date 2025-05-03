@@ -40,12 +40,10 @@ const uploadToCloudinary = async (file: File) => {
   }
 };
 
-type RouteHandler = (
+export const GET = async (
   request: NextRequest,
-  context: { params: { id: string } }
-) => Promise<NextResponse>;
-
-export const GET: RouteHandler = async (request, { params }) => {
+  { params }: { params: Record<string, string> }
+) => {
   try {
     const id = params.id;
     const filePath = path.join(process.cwd(), 'data', 'forms.json');
@@ -64,7 +62,10 @@ export const GET: RouteHandler = async (request, { params }) => {
   }
 };
 
-export const PUT: RouteHandler = async (request, { params }) => {
+export const PUT = async (
+  request: NextRequest,
+  { params }: { params: Record<string, string> }
+) => {
   try {
     const id = params.id;
     const formData = await request.formData();
@@ -120,7 +121,10 @@ export const PUT: RouteHandler = async (request, { params }) => {
   }
 };
 
-export const DELETE: RouteHandler = async (request, { params }) => {
+export const DELETE = async (
+  request: NextRequest,
+  { params }: { params: Record<string, string> }
+) => {
   try {
     const id = params.id;
     const filePath = path.join(process.cwd(), 'data', 'forms.json');
