@@ -40,10 +40,10 @@ const uploadToCloudinary = async (file: File) => {
   }
 };
 
-export const GET = async (
+export async function GET(
   request: NextRequest,
-  { params }: { params: Record<string, string> }
-) => {
+  { params }: { params: { id: string } }
+) {
   try {
     const id = params.id;
     const filePath = path.join(process.cwd(), 'data', 'forms.json');
@@ -60,12 +60,12 @@ export const GET = async (
     console.error('Error reading form:', error);
     return NextResponse.json({ error: 'Failed to read form' }, { status: 500 });
   }
-};
+}
 
-export const PUT = async (
+export async function PUT(
   request: NextRequest,
-  { params }: { params: Record<string, string> }
-) => {
+  { params }: { params: { id: string } }
+) {
   try {
     const id = params.id;
     const formData = await request.formData();
@@ -119,12 +119,12 @@ export const PUT = async (
     console.error('Error updating form:', error);
     return NextResponse.json({ error: 'Failed to update form' }, { status: 500 });
   }
-};
+}
 
-export const DELETE = async (
+export async function DELETE(
   request: NextRequest,
-  { params }: { params: Record<string, string> }
-) => {
+  { params }: { params: { id: string } }
+) {
   try {
     const id = params.id;
     const filePath = path.join(process.cwd(), 'data', 'forms.json');
@@ -151,4 +151,4 @@ export const DELETE = async (
     console.error('Error deleting form:', error);
     return NextResponse.json({ error: 'Failed to delete form' }, { status: 500 });
   }
-}; 
+} 
