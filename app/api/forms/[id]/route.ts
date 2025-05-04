@@ -10,8 +10,7 @@ export async function GET(
 ): Promise<NextResponse> {
   try {
     const { id } = await params;
-    const filePath = path.join(process.cwd(), 'data', 'forms.json');
-    const data = await fs.readFile(filePath, 'utf-8');
+    const data = await fs.readFile(formsPath, 'utf-8');
     const { forms } = JSON.parse(data);
     const form = forms.find((f: any) => f.id === id);
 
@@ -35,8 +34,7 @@ export async function PUT(
     const body = await request.json();
     const { name, position, content, image, profile_link } = body;
 
-    const filePath = path.join(process.cwd(), 'data', 'forms.json');
-    const data = await fs.readFile(filePath, 'utf-8');
+    const data = await fs.readFile(formsPath, 'utf-8');
     const { forms } = JSON.parse(data);
 
     const updatedForms = forms.map((form: any) => {
@@ -54,7 +52,7 @@ export async function PUT(
       return form;
     });
 
-    await fs.writeFile(filePath, JSON.stringify({ forms: updatedForms }, null, 2));
+    await fs.writeFile(formsPath, JSON.stringify({ forms: updatedForms }, null, 2));
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -69,12 +67,11 @@ export async function DELETE(
 ): Promise<NextResponse> {
   try {
     const { id } = await params;
-    const filePath = path.join(process.cwd(), 'data', 'forms.json');
-    const data = await fs.readFile(filePath, 'utf-8');
+    const data = await fs.readFile(formsPath, 'utf-8');
     const { forms } = JSON.parse(data);
 
     const updatedForms = forms.filter((form: any) => form.id !== id);
-    await fs.writeFile(filePath, JSON.stringify({ forms: updatedForms }, null, 2));
+    await fs.writeFile(formsPath, JSON.stringify({ forms: updatedForms }, null, 2));
 
     return NextResponse.json({ success: true });
   } catch (error) {
