@@ -42,10 +42,10 @@ const uploadToCloudinary = async (file: File) => {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
-    const id = params.id;
+    const id = context.params.id;
     const filePath = path.join(process.cwd(), 'data', 'forms.json');
     const data = await fs.readFile(filePath, 'utf-8');
     const { forms } = JSON.parse(data);
@@ -151,4 +151,4 @@ export async function DELETE(
     console.error('Error deleting form:', error);
     return NextResponse.json({ error: 'Failed to delete form' }, { status: 500 });
   }
-} 
+}
