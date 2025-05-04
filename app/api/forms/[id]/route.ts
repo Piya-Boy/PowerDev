@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import type { RequestContext } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs/promises';
 import path from 'path';
@@ -42,9 +41,9 @@ const uploadToCloudinary = async (file: File) => {
 };
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
-): Promise<Response> {
+): Promise<NextResponse> {
   try {
     const id = params.id;
     const filePath = path.join(process.cwd(), 'data', 'forms.json');
@@ -64,9 +63,9 @@ export async function GET(
 }
 
 export async function PUT(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
-): Promise<Response> {
+): Promise<NextResponse> {
   try {
     const id = params.id;
     const formData = await request.formData();
@@ -123,9 +122,9 @@ export async function PUT(
 }
 
 export async function DELETE(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
-): Promise<Response> {
+): Promise<NextResponse> {
   try {
     const id = params.id;
     const filePath = path.join(process.cwd(), 'data', 'forms.json');
