@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
 
-const formsPath = path.join(process.cwd(), 'data', 'forms.json');
+const MOCK_API_URL = 'https://6817abbb26a599ae7c3b163b.mockapi.io/api/powerdev/name';
 
 export async function GET(
   request: NextRequest,
@@ -10,14 +8,13 @@ export async function GET(
 ): Promise<NextResponse> {
   try {
     const { id } = await params;
-    const data = await fs.readFile(formsPath, 'utf-8');
-    const { forms } = JSON.parse(data);
-    const form = forms.find((f: any) => f.id === id);
-
-    if (!form) {
+    const response = await fetch(`${MOCK_API_URL}/${id}`);
+    
+    if (!response.ok) {
       return NextResponse.json({ error: 'Form not found' }, { status: 404 });
     }
 
+    const form = await response.json();
     return NextResponse.json(form);
   } catch (error) {
     console.error('Error reading form:', error);
@@ -34,25 +31,24 @@ export async function PUT(
     const body = await request.json();
     const { name, position, content, image, profile_link } = body;
 
-    const data = await fs.readFile(formsPath, 'utf-8');
-    const { forms } = JSON.parse(data);
-
-    const updatedForms = forms.map((form: any) => {
-      if (form.id === id) {
-        return {
-          ...form,
-          name,
-          position,
-          content,
-          image,
-          profile_link,
-          updatedAt: new Date().toISOString(),
-        };
-      }
-      return form;
+    const response = await fetch(`${MOCK_API_URL}/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name,
+        position,
+        content,
+        image,
+        profile_link,
+        updatedAt: new Date().toISOString(),
+      }),
     });
 
-    await fs.writeFile(formsPath, JSON.stringify({ forms: updatedForms }, null, 2));
+    if (!response.ok) {
+      throw new Error('Failed to update form');
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -67,11 +63,13 @@ export async function DELETE(
 ): Promise<NextResponse> {
   try {
     const { id } = await params;
-    const data = await fs.readFile(formsPath, 'utf-8');
-    const { forms } = JSON.parse(data);
+    const response = await fetch(`${MOCK_API_URL}/${id}`, {
+      method: 'DELETE',
+    });
 
-    const updatedForms = forms.filter((form: any) => form.id !== id);
-    await fs.writeFile(formsPath, JSON.stringify({ forms: updatedForms }, null, 2));
+    if (!response.ok) {
+      throw new Error('Failed to delete form');
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {

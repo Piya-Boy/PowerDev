@@ -1,25 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
-import crypto from 'crypto';
 
-// Ensure the forms.json file exists
-const ensureFormsFile = async () => {
-  const filePath = path.join(process.cwd(), 'data', 'forms.json');
-  try {
-    await fs.access(filePath);
-  } catch {
-    await fs.mkdir(path.dirname(filePath), { recursive: true });
-    await fs.writeFile(filePath, JSON.stringify({ forms: [] }));
-  }
-};
+const MOCK_API_URL = 'https://6817abbb26a599ae7c3b163b.mockapi.io/api/powerdev/name';
 
 export async function GET() {
   try {
-    await ensureFormsFile();
-    const filePath = path.join(process.cwd(), 'data', 'forms.json');
-    const data = await fs.readFile(filePath, 'utf-8');
-    return NextResponse.json(JSON.parse(data));
+    const response = await fetch(MOCK_API_URL);
+    if (!response.ok) {
+      throw new Error('Failed to fetch forms');
+    }
+    const data = await response.json();
+    return NextResponse.json({ forms: data });
   } catch (error) {
     console.error('Error reading forms:', error);
     return NextResponse.json({ error: 'Failed to read forms' }, { status: 500 });
@@ -38,24 +28,27 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    const filePath = path.join(process.cwd(), 'data', 'forms.json');
-    const data = await fs.readFile(filePath, 'utf-8');
-    const { forms } = JSON.parse(data);
+    const response = await fetch(MOCK_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name,
+        position,
+        content,
+        image,
+        profile_link,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }),
+    });
 
-    const newForm = {
-      id: crypto.randomUUID(),
-      name,
-      position,
-      content,
-      image,
-      profile_link,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    if (!response.ok) {
+      throw new Error('Failed to create form');
+    }
 
-    forms.push(newForm);
-    await fs.writeFile(filePath, JSON.stringify({ forms }, null, 2));
-
+    const newForm = await response.json();
     return NextResponse.json(newForm);
   } catch (error) {
     console.error('Error creating form:', error);
@@ -76,30 +69,24 @@ export async function PUT(request: Request) {
     const imageUrl = formData.get('image') as string;
     const profile_link = formData.get('profile_link') as string;
 
-    // Read existing forms
-    await ensureFormsFile();
-    const filePath = path.join(process.cwd(), 'data', 'forms.json');
-    const data = await fs.readFile(filePath, 'utf-8');
-    const { forms } = JSON.parse(data);
-
-    // Update form
-    const updatedForms = forms.map((form: any) => {
-      if (form.id === id) {
-        return {
-          ...form,
-          name,
-          position,
-          content,
-          image: imageUrl,
-          profile_link,
-          updatedAt: new Date().toISOString(),
-        };
-      }
-      return form;
+    const response = await fetch(`${MOCK_API_URL}/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name,
+        position,
+        content,
+        image: imageUrl,
+        profile_link,
+        updatedAt: new Date().toISOString(),
+      }),
     });
 
-    // Save updated forms
-    await fs.writeFile(filePath, JSON.stringify({ forms: updatedForms }, null, 2));
+    if (!response.ok) {
+      throw new Error('Failed to update form');
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -117,17 +104,13 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: 'ID is required' }, { status: 400 });
     }
 
-    // Read existing forms
-    await ensureFormsFile();
-    const filePath = path.join(process.cwd(), 'data', 'forms.json');
-    const data = await fs.readFile(filePath, 'utf-8');
-    const { forms } = JSON.parse(data);
+    const response = await fetch(`${MOCK_API_URL}/${id}`, {
+      method: 'DELETE',
+    });
 
-    // Delete form
-    const updatedForms = forms.filter((form: any) => form.id !== id);
-
-    // Save updated forms
-    await fs.writeFile(filePath, JSON.stringify({ forms: updatedForms }, null, 2));
+    if (!response.ok) {
+      throw new Error('Failed to delete form');
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {

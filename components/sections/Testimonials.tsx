@@ -5,12 +5,29 @@ import { motion, useAnimation, useMotionValue, useTransform } from 'framer-motio
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Quote } from 'lucide-react';
-import forms from '@/data/forms.json';
 import Link from 'next/link';
+import { Testimonial } from '@/types/testimonial';
 
 const Testimonials = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const testimonials = forms.forms;
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        const response = await fetch('/api/forms');
+        const data = await response.json();
+        setTestimonials(data.forms);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error fetching testimonials:', error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchTestimonials();
+  }, []);
   
   const showPrev = () => {
     setCurrentIndex((prevIndex) => (prevIndex === 0 ? testimonials.length - 1 : prevIndex - 1));
@@ -52,13 +69,37 @@ const Testimonials = () => {
   // auto scroll if hovered stop
   useEffect(() => {
     const interval = setInterval(() => {
-      if (!isHovered) {
+      if (!isHovered && testimonials.length > 0) {
         showNext();
       }
     }, 5000);
     return () => clearInterval(interval);
-  }, [showNext, isHovered]);
+  }, [showNext, isHovered, testimonials.length]);
       
+  if (isLoading) {
+    return (
+      <section className="section-padding bg-gradient-to-b from-[#0D0D0D] to-[#0A0F1F]">
+        <div className="container mx-auto px-4">
+          <div className="text-center">
+            <p className="text-gray-300">Loading testimonials...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (testimonials.length === 0) {
+    return (
+      <section className="section-padding bg-gradient-to-b from-[#0D0D0D] to-[#0A0F1F]">
+        <div className="container mx-auto px-4">
+          <div className="text-center">
+            <p className="text-gray-300">No testimonials available.</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="section-padding bg-gradient-to-b from-[#0D0D0D] to-[#0A0F1F]">
       <div className="container mx-auto px-4">
