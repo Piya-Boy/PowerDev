@@ -1,6 +1,7 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
+import crypto from 'crypto';
 
 // Ensure the forms.json file exists
 const ensureFormsFile = async () => {
@@ -25,49 +26,43 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    const formData = await request.formData();
-    const name = formData.get('name') as string;
-    const position = JSON.parse(formData.get('position') as string);
-    const content = formData.get('content') as string;
-    const imageUrl = formData.get('image') as string;
-    const profile_link = formData.get('profile_link') as string;
+    const body = await request.json();
+    const { name, position, content, image, profile_link } = body;
 
-    // Validate required fields
-    if (!name || !position || !content || !profile_link || !imageUrl) {
+    if (!name || !position || !content || !image) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
       );
     }
 
-    // Read existing forms
-    await ensureFormsFile();
     const filePath = path.join(process.cwd(), 'data', 'forms.json');
     const data = await fs.readFile(filePath, 'utf-8');
     const { forms } = JSON.parse(data);
 
-    // Add new form
     const newForm = {
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       name,
       position,
       content,
-      image: imageUrl,
+      image,
       profile_link,
       createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
     forms.push(newForm);
-
-    // Save updated forms
     await fs.writeFile(filePath, JSON.stringify({ forms }, null, 2));
 
     return NextResponse.json(newForm);
   } catch (error) {
-    console.error('Error saving form:', error);
-    return NextResponse.json({ error: 'Failed to save form' }, { status: 500 });
+    console.error('Error creating form:', error);
+    return NextResponse.json(
+      { error: 'Failed to create form' },
+      { status: 500 }
+    );
   }
 }
 

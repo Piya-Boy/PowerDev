@@ -273,20 +273,12 @@ export default function FormsPage() {
       const method = editingId ? 'PUT' : 'POST';
       const url = editingId ? `/api/forms/${editingId}` : '/api/forms';
       
-      const formData = new FormData();
-      formData.append('name', values.name);
-      formData.append('position', JSON.stringify(values.position));
-      formData.append('content', values.content);
-      formData.append('profile_link', values.profile_link);
-      formData.append('image', values.image);
-      
-      if (editingId) {
-        formData.append('id', editingId);
-      }
-      
       const response = await fetch(url, {
         method,
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
       });
 
       if (!response.ok) {

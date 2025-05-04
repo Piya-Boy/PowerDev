@@ -32,12 +32,8 @@ export async function PUT(
 ): Promise<NextResponse> {
   try {
     const { id } = await params;
-    const formData = await request.formData();
-    const name = formData.get('name') as string;
-    const position = JSON.parse(formData.get('position') as string);
-    const content = formData.get('content') as string;
-    const imageUrl = formData.get('image') as string;
-    const profile_link = formData.get('profile_link') as string;
+    const body = await request.json();
+    const { name, position, content, image, profile_link } = body;
 
     const filePath = path.join(process.cwd(), 'data', 'forms.json');
     const data = await fs.readFile(filePath, 'utf-8');
@@ -50,7 +46,7 @@ export async function PUT(
           name,
           position,
           content,
-          image: imageUrl,
+          image,
           profile_link,
           updatedAt: new Date().toISOString(),
         };
