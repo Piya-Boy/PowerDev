@@ -35,7 +35,7 @@ const Contact = () => {
     const subject = `Contact Form Submission from ${name}`;
     const body = `Name: ${name}%0D%0AEmail: ${email}%0D%0A%0D%0AMessage: ${message}`;
     
-    window.location.href = `mailto:powerdev.tech@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = `mailto:powerdev.tech@hotmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     
     toast.success('Opening email client...');
     form.reset();
@@ -73,7 +73,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="text-lg font-semibold mb-1 text-white">Email</h4>
-                  <p className="text-gray-300">powerdev.tech@gmail.com</p>
+                  <p className="text-gray-300">powerdev.tech@hotmail.com</p>
                 </div>
               </div>
               

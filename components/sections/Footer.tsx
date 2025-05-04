@@ -64,7 +64,7 @@ const Footer = () => {
             <h3 className="text-xl font-bold text-white">Contact Us</h3>
             <div className="flex items-center space-x-2 text-gray-400">
               <Mail className="h-5 w-5" />
-              <span>powerdev.tech@gmail.com</span>
+              <span>powerdev.tech@hotmail.com</span>
             </div>
             <Link href="#contact">
               <Button className="mt-4 bg-[hsl(var(--neon-green))] text-black hover:bg-[hsl(var(--neon-green)/0.8)]">

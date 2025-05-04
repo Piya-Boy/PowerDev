@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { Testimonial } from '@/types/testimonial';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,8 +15,7 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ImageIcon, UploadIcon } from "lucide-react";
-import { useDropzone } from 'react-dropzone';
+import { X } from "lucide-react";
 import { useToast } from "../../components/ui/use-toast";
 
 const containerVariants = {
@@ -105,7 +104,7 @@ type FormValues = {
   name: string;
   position: string[];
   content: string;
-  image: File | null;
+  image: string;
   profile_link: string;
 };
 
@@ -113,7 +112,7 @@ const formSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   position: z.array(z.string()).min(1, 'Select at least one position'),
   content: z.string().min(10, 'Content must be at least 10 characters'),
-  image: z.custom<File>().nullable(),
+  image: z.string().url('Please enter a valid image URL'),
   profile_link: z.string().url('Please enter a valid URL'),
 });
 
@@ -248,7 +247,7 @@ export default function FormsPage() {
       name: '',
       position: [],
       content: '',
-      image: null,
+      image: '',
       profile_link: '',
     },
   });
@@ -279,16 +278,10 @@ export default function FormsPage() {
       formData.append('position', JSON.stringify(values.position));
       formData.append('content', values.content);
       formData.append('profile_link', values.profile_link);
-      
-      if (values.image) {
-        formData.append('image', values.image);
-      }
+      formData.append('image', values.image);
       
       if (editingId) {
         formData.append('id', editingId);
-        if (imagePreview && !values.image) {
-          formData.append('existingImage', imagePreview);
-        }
       }
       
       const response = await fetch(url, {
@@ -331,7 +324,7 @@ export default function FormsPage() {
       name: formData.name,
       position: formData.position,
       content: formData.content,
-      image: null,
+      image: formData.image,
       profile_link: formData.profile_link,
     });
     setImagePreview(formData.image);
@@ -354,27 +347,6 @@ export default function FormsPage() {
       console.error('Error deleting form:', error);
     }
   };
-
-  const handleImageChange = useCallback((acceptedFiles: File[]) => {
-    if (acceptedFiles?.length > 0) {
-      const file = acceptedFiles[0];
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-      form.setValue('image', file);
-    }
-  }, [form]);
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop: handleImageChange,
-    accept: {
-      'image/*': ['.jpeg', '.jpg', '.png', '.gif', '.webp']
-    },
-    maxFiles: 1,
-    multiple: false
-  });
 
   return (
     <ThemeProvider>
@@ -403,7 +375,7 @@ export default function FormsPage() {
                         name: '',
                         position: [],
                         content: '',
-                        image: null,
+                        image: '',
                         profile_link: '',
                       });
                       setImagePreview(null);
@@ -557,52 +529,26 @@ export default function FormsPage() {
                                 name="image"
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel className="text-purple-200">Profile Image</FormLabel>
+                                    <FormLabel className="text-purple-200">Profile Image URL</FormLabel>
                                     <FormControl>
                                       <div className="bg-[#2a2a42] border border-purple-500/30 rounded-lg p-4 hover:border-purple-500 transition-colors">
                                         <div className="flex flex-col items-center gap-4">
-                                          {imagePreview ? (
+                                          {field.value ? (
                                             <div className="relative group">
                                               <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-purple-500/30">
                                                 <img
-                                                  src={imagePreview}
+                                                  src={field.value}
                                                   alt="Preview"
                                                   className="w-full h-full object-cover"
                                                 />
                                               </div>
-                                              <div 
-                                                {...getRootProps()} 
-                                                className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-full cursor-pointer"
-                                              >
-                                                <UploadIcon className="w-8 h-8 text-white" />
-                                                <input {...getInputProps()} name={field.name} />
-                                              </div>
                                             </div>
-                                          ) : (
-                                            <div
-                                              {...getRootProps()}
-                                              className={`w-32 h-32 rounded-full border-2 border-dashed flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors ${
-                                                isDragActive
-                                                  ? 'border-purple-400 bg-purple-500/20'
-                                                  : 'border-purple-500/30 hover:border-purple-400 hover:bg-purple-500/10'
-                                              }`}
-                                            >
-                                              <input {...getInputProps()} name={field.name} />
-                                              <ImageIcon className="w-8 h-8 text-purple-300" />
-                                              <div className="text-center">
-                                                <p className="text-sm text-purple-200">
-                                                  {isDragActive ? (
-                                                    "Drop image here"
-                                                  ) : (
-                                                    "Drag image here or click to select"
-                                                  )}
-                                                </p>
-                                                <p className="text-xs text-purple-400 mt-1">
-                                                  JPG, PNG, GIF up to 10MB
-                                                </p>
-                                              </div>
-                                            </div>
-                                          )}
+                                          ) : null}
+                                          <Input 
+                                            placeholder="Enter image URL" 
+                                            {...field}
+                                            className="bg-[#2a2a42] border-purple-500/30 focus:border-purple-500 transition-colors"
+                                          />
                                         </div>
                                       </div>
                                     </FormControl>
