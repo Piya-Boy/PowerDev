@@ -3,60 +3,20 @@ import { NextRequest, NextResponse } from 'next/server';
 const MOCK_API_URL = 'https://6817abbb26a599ae7c3b163b.mockapi.io/api/powerdev/name';
 
 export async function GET() {
-  try {
-    const response = await fetch(MOCK_API_URL);
-    if (!response.ok) {
-      throw new Error('Failed to fetch forms');
-    }
-    const data = await response.json();
-    return NextResponse.json({ forms: data });
-  } catch (error) {
-    console.error('Error reading forms:', error);
-    return NextResponse.json({ error: 'Failed to read forms' }, { status: 500 });
-  }
+  const res = await fetch(MOCK_API_URL);
+  const data = await res.json();
+  return Response.json({ forms: data });
 }
 
-export async function POST(request: NextRequest): Promise<NextResponse> {
-  try {
-    const body = await request.json();
-    const { name, position, content, image, profile_link } = body;
-
-    if (!name || !position || !content || !image) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
-    }
-
-    const response = await fetch(MOCK_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name,
-        position,
-        content,
-        image,
-        profile_link,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to create form');
-    }
-
-    const newForm = await response.json();
-    return NextResponse.json(newForm);
-  } catch (error) {
-    console.error('Error creating form:', error);
-    return NextResponse.json(
-      { error: 'Failed to create form' },
-      { status: 500 }
-    );
-  }
+export async function POST(req: Request) {
+  const body = await req.json();
+  const res = await fetch(MOCK_API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json();
+  return Response.json(data);
 }
 
 export async function PUT(request: Request) {
