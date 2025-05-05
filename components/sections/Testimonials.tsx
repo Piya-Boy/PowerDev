@@ -133,19 +133,20 @@ const Testimonials = () => {
         </motion.div>
 
         <div className="relative">
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+          <Button 
+            variant="outline" 
+            size="icon" 
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 border-[hsl(var(--neon-blue))] text-[hsl(var(--neon-blue))] hover:bg-[hsl(var(--neon-blue)/0.1)] -ml-4 hidden md:flex"
+            onClick={showPrev}
+            asChild
           >
-            <Button 
-              variant="outline" 
-              size="icon" 
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 border-[hsl(var(--neon-blue))] text-[hsl(var(--neon-blue))] hover:bg-[hsl(var(--neon-blue)/0.1)] -ml-4 hidden md:flex"
-              onClick={showPrev}
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               <ChevronLeft className="h-6 w-6" />
-            </Button>
-          </motion.div>
+            </motion.div>
+          </Button>
           
           <div className="overflow-hidden py-8">
             <motion.div
@@ -205,48 +206,51 @@ const Testimonials = () => {
             </motion.div>
           </div>
           
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+          <Button 
+            variant="outline" 
+            size="icon" 
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 border-[hsl(var(--neon-blue))] text-[hsl(var(--neon-blue))] hover:bg-[hsl(var(--neon-blue)/0.1)] -mr-4 hidden md:flex"
+            onClick={showNext}
+            asChild
           >
-            <Button 
-              variant="outline" 
-              size="icon" 
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 border-[hsl(var(--neon-blue))] text-[hsl(var(--neon-blue))] hover:bg-[hsl(var(--neon-blue)/0.1)] -mr-4 hidden md:flex"
-              onClick={showNext}
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               <ChevronRight className="h-6 w-6" />
-            </Button>
-          </motion.div>
+            </motion.div>
+          </Button>
         </div>
         
         <div className="flex justify-center gap-2 mt-4 md:hidden">
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+          <Button 
+            variant="outline" 
+            size="icon" 
+            className="border-[hsl(var(--neon-blue))] text-[hsl(var(--neon-blue))] hover:bg-[hsl(var(--neon-blue)/0.1)]"
+            onClick={showPrev}
+            asChild
           >
-            <Button 
-              variant="outline" 
-              size="icon" 
-              className="border-[hsl(var(--neon-blue))] text-[hsl(var(--neon-blue))] hover:bg-[hsl(var(--neon-blue)/0.1)]"
-              onClick={showPrev}
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               <ChevronLeft className="h-5 w-5" />
-            </Button>
-          </motion.div>
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            </motion.div>
+          </Button>
+          <Button 
+            variant="outline" 
+            size="icon" 
+            className="border-[hsl(var(--neon-blue))] text-[hsl(var(--neon-blue))] hover:bg-[hsl(var(--neon-blue)/0.1)]"
+            onClick={showNext}
+            asChild
           >
-            <Button 
-              variant="outline" 
-              size="icon" 
-              className="border-[hsl(var(--neon-blue))] text-[hsl(var(--neon-blue))] hover:bg-[hsl(var(--neon-blue)/0.1)]"
-              onClick={showNext}
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               <ChevronRight className="h-5 w-5" />
-            </Button>
-          </motion.div>
+            </motion.div>
+          </Button>
         </div>
         
         <div className="flex justify-center gap-2 mt-6">
