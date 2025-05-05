@@ -238,6 +238,8 @@ export default function FormsPage() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [formToDelete, setFormToDelete] = useState<Testimonial | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const { toast } = useToast();
 
@@ -269,6 +271,7 @@ export default function FormsPage() {
   };
 
   const onSubmit = async (values: FormValues) => {
+    setIsSubmitting(true);
     try {
       const method = editingId ? 'PUT' : 'POST';
       const url = editingId ? `/api/forms/${editingId}` : '/api/forms';
@@ -290,15 +293,18 @@ export default function FormsPage() {
       const result = await response.json();
       console.log('Form submitted successfully:', result);
       
+      // รอ mockapi sync
+      await new Promise(res => setTimeout(res, 1200));
+      await loadForms(); // Wait for data to reload
+      
+      // Dispatch event to notify other components
+      window.dispatchEvent(new Event('testimonialDataChanged'));
+      
       // Reset form and close dialog
       reset();
       setImagePreview(null);
       setEditingId(null);
       setOpen(false); // Close the dialog
-      await loadForms(); // Wait for data to reload
-      
-      // Dispatch event to notify other components
-      window.dispatchEvent(new Event('testimonialDataChanged'));
       
       toast({
         title: 'Success',
@@ -311,6 +317,8 @@ export default function FormsPage() {
         description: error instanceof Error ? error.message : 'Failed to submit form',
         variant: 'destructive',
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -328,12 +336,15 @@ export default function FormsPage() {
   };
 
   const handleDelete = async (id: string) => {
+    setIsDeleting(true);
     try {
       const response = await fetch(`/api/forms/${id}`, {
         method: 'DELETE',
       });
 
       if (response.ok) {
+        // รอ mockapi sync
+        await new Promise(res => setTimeout(res, 1200));
         await loadForms(); // Wait for data to reload
         setDeleteDialogOpen(false);
         setFormToDelete(null);
@@ -343,6 +354,8 @@ export default function FormsPage() {
       }
     } catch (error) {
       console.error('Error deleting form:', error);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -590,8 +603,9 @@ export default function FormsPage() {
                               <Button 
                                 type="submit" 
                                 className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+                                disabled={isSubmitting}
                               >
-                                {editingId ? 'Update Testimonial' : 'Add Testimonial'}
+                                {isSubmitting ? (editingId ? 'กำลังอัปเดต...' : 'กำลังเพิ่ม...') : (editingId ? 'Update Testimonial' : 'Add Testimonial')}
                               </Button>
                             </motion.div>
                           </form>
@@ -700,8 +714,9 @@ export default function FormsPage() {
                             }}
                             size="sm"
                             className="bg-red-500/10 text-red-300 hover:bg-red-500/20 hover:text-red-200 cursor-pointer"
+                            disabled={isDeleting}
                           >
-                            Delete
+                            {isDeleting ? 'กำลังลบ...' : 'Delete'}
                           </Button>
                         </motion.div>
                       </div>
@@ -857,8 +872,9 @@ export default function FormsPage() {
                           variant="destructive"
                           onClick={() => formToDelete && handleDelete(formToDelete.id)}
                           className="bg-red-500/10 text-red-300 hover:bg-red-500/20 hover:text-red-200"
+                          disabled={isDeleting}
                         >
-                          Delete
+                          {isDeleting ? 'กำลังลบ...' : 'Delete'}
                         </Button>
                       </motion.div>
                     </motion.div>
