@@ -295,7 +295,10 @@ export default function FormsPage() {
       setImagePreview(null);
       setEditingId(null);
       setOpen(false); // Close the dialog
-      loadForms();
+      await loadForms(); // Wait for data to reload
+      
+      // Dispatch event to notify other components
+      window.dispatchEvent(new Event('testimonialDataChanged'));
       
       toast({
         title: 'Success',
@@ -331,9 +334,12 @@ export default function FormsPage() {
       });
 
       if (response.ok) {
-        loadForms();
+        await loadForms(); // Wait for data to reload
         setDeleteDialogOpen(false);
         setFormToDelete(null);
+        
+        // Dispatch event to notify other components
+        window.dispatchEvent(new Event('testimonialDataChanged'));
       }
     } catch (error) {
       console.error('Error deleting form:', error);

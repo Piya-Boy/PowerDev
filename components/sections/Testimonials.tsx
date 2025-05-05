@@ -12,6 +12,7 @@ const Testimonials = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
   
   useEffect(() => {
     const fetchTestimonials = async () => {
@@ -27,6 +28,21 @@ const Testimonials = () => {
     };
 
     fetchTestimonials();
+  }, [refreshKey]);
+
+  const refreshData = () => {
+    setRefreshKey(prev => prev + 1);
+  };
+
+  useEffect(() => {
+    const handleDataChange = () => {
+      refreshData();
+    };
+
+    window.addEventListener('testimonialDataChanged', handleDataChange);
+    return () => {
+      window.removeEventListener('testimonialDataChanged', handleDataChange);
+    };
   }, []);
   
   const showPrev = () => {
