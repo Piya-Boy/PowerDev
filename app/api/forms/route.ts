@@ -1,22 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { PrismaClient } from '@prisma/client';
 
-const MOCK_API_URL = 'https://6817abbb26a599ae7c3b163b.mockapi.io/api/powerdev/name';
+const prisma = new PrismaClient();
+
 
 export async function GET() {
-  const res = await fetch(MOCK_API_URL);
-  const data = await res.json();
-  return Response.json({ forms: data });
+  try {
+    const testimonials = await prisma.testimonial.findMany();
+    return NextResponse.json({ forms: testimonials });
+  } catch (error) {
+    console.error('Error fetching testimonials:', error);
+    return NextResponse.json({ error: 'Failed to fetch testimonials' }, { status: 500 });
+  }
 }
 
 export async function POST(req: Request) {
-  const body = await req.json();
-  const res = await fetch(MOCK_API_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
-  const data = await res.json();
-  return Response.json(data);
+  try {
+    const body = await req.json();
+    const newTestimonial = await prisma.testimonial.create({
+      data: {
+        name: body.name,
+        position: body.position,
+        content: body.content,
+        image: body.image,
+        profile_link: body.profile_link,
+      },
+    });
+    return NextResponse.json(newTestimonial, { status: 201 });
+  } catch (error) {
+    console.error('Error creating testimonial:', error);
+    return NextResponse.json({ error: 'Failed to create testimonial' }, { status: 500 });
+  }
 }
 
 export async function PUT(request: Request) {
@@ -29,29 +43,21 @@ export async function PUT(request: Request) {
     const imageUrl = formData.get('image') as string;
     const profile_link = formData.get('profile_link') as string;
 
-    const response = await fetch(`${MOCK_API_URL}/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    const updatedTestimonial = await prisma.testimonial.update({
+      where: { id },
+      data: {
         name,
         position,
         content,
         image: imageUrl,
         profile_link,
-        updatedAt: new Date().toISOString(),
-      }),
+      },
     });
 
-    if (!response.ok) {
-      throw new Error('Failed to update form');
-    }
-
-    return NextResponse.json({ success: true });
+    return NextResponse.json(updatedTestimonial);
   } catch (error) {
-    console.error('Error updating form:', error);
-    return NextResponse.json({ error: 'Failed to update form' }, { status: 500 });
+    console.error('Error updating testimonial:', error);
+    return NextResponse.json({ error: 'Failed to update testimonial' }, { status: 500 });
   }
 }
 
@@ -64,17 +70,13 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: 'ID is required' }, { status: 400 });
     }
 
-    const response = await fetch(`${MOCK_API_URL}/${id}`, {
-      method: 'DELETE',
+    await prisma.testimonial.delete({
+      where: { id },
     });
-
-    if (!response.ok) {
-      throw new Error('Failed to delete form');
-    }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error deleting form:', error);
-    return NextResponse.json({ error: 'Failed to delete form' }, { status: 500 });
+    console.error('Error deleting testimonial:', error);
+    return NextResponse.json({ error: 'Failed to delete testimonial' }, { status: 500 });
   }
 } 

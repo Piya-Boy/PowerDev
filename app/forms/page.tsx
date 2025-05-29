@@ -112,8 +112,8 @@ const formSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   position: z.array(z.string()).min(1, 'Select at least one position'),
   content: z.string().min(10, 'Content must be at least 10 characters'),
-  image: z.string().url('Please enter a valid image URL'),
-  profile_link: z.string().url('Please enter a valid URL'),
+  image: z.string().url('Please enter a valid image URL').optional().or(z.literal('')),
+  profile_link: z.string().url('Please enter a valid URL').optional().or(z.literal('')),
 });
 
 const overlayVariants = {

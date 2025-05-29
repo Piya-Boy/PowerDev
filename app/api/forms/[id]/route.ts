@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { PrismaClient } from '@prisma/client';
 
-const MOCK_API_URL = 'https://6817abbb26a599ae7c3b163b.mockapi.io/api/powerdev/name';
+const prisma = new PrismaClient();
+
 
 export async function GET(
   request: NextRequest,
@@ -8,17 +10,20 @@ export async function GET(
 ): Promise<NextResponse> {
   try {
     const { id } = await params;
-    const response = await fetch(`${MOCK_API_URL}/${id}`);
+    const testimonial = await prisma.testimonial.findUnique({
+      where: {
+        id: id,
+      },
+    });
     
-    if (!response.ok) {
-      return NextResponse.json({ error: 'Form not found' }, { status: 404 });
+    if (!testimonial) {
+      return NextResponse.json({ error: 'Testimonial not found' }, { status: 404 });
     }
 
-    const form = await response.json();
-    return NextResponse.json(form);
+    return NextResponse.json(testimonial);
   } catch (error) {
-    console.error('Error reading form:', error);
-    return NextResponse.json({ error: 'Failed to read form' }, { status: 500 });
+    console.error('Error fetching testimonial:', error);
+    return NextResponse.json({ error: 'Failed to fetch testimonial' }, { status: 500 });
   }
 }
 
@@ -31,29 +36,23 @@ export async function PUT(
     const body = await request.json();
     const { name, position, content, image, profile_link } = body;
 
-    const response = await fetch(`${MOCK_API_URL}/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
+    const updatedTestimonial = await prisma.testimonial.update({
+      where: {
+        id: id,
       },
-      body: JSON.stringify({
-        name,
-        position,
-        content,
-        image,
-        profile_link,
-        updatedAt: new Date().toISOString(),
-      }),
+      data: {
+        name: name,
+        position: position,
+        content: content,
+        image: image,
+        profile_link: profile_link,
+      },
     });
 
-    if (!response.ok) {
-      throw new Error('Failed to update form');
-    }
-
-    return NextResponse.json({ success: true });
+    return NextResponse.json(updatedTestimonial);
   } catch (error) {
-    console.error('Error updating form:', error);
-    return NextResponse.json({ error: 'Failed to update form' }, { status: 500 });
+    console.error('Error updating testimonial:', error);
+    return NextResponse.json({ error: 'Failed to update testimonial' }, { status: 500 });
   }
 }
 
@@ -63,17 +62,16 @@ export async function DELETE(
 ): Promise<NextResponse> {
   try {
     const { id } = await params;
-    const response = await fetch(`${MOCK_API_URL}/${id}`, {
-      method: 'DELETE',
-    });
 
-    if (!response.ok) {
-      throw new Error('Failed to delete form');
-    }
+    await prisma.testimonial.delete({
+      where: {
+        id: id,
+      },
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error deleting form:', error);
-    return NextResponse.json({ error: 'Failed to delete form' }, { status: 500 });
+    console.error('Error deleting testimonial:', error);
+    return NextResponse.json({ error: 'Failed to delete testimonial' }, { status: 500 });
   }
 }
