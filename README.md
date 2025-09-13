@@ -197,4 +197,4 @@ For support and questions, please contact the development team or create an issu
 
 ---
 
-Built with ❤️ using Next.js, React, and modern web technologies.
+Built with ❤️ using Next.js, React, and modern web technologies.# PowerDev
