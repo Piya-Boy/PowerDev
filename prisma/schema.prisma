@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+
+model Testimonial {
+  id           String @id @default(uuid())
+  position     String[]
+  content      String
+  image        String?
+  profile_link String?
+  userId       String
+  user         User   @relation(fields: [userId], references: [id])
+}
+
+model Portfolio {
+  id           String   @id @default(uuid())
+  title        String
+  category     String
+  image        String[]
+  description  String
+  technologies String[]
+  challenge    String
+  solution     String
+  features     String[]
+  demo         String?
+  github       String?
+}
+
+model Product {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+  price       Float
+  image       String
+  category    String
+}
+
+model User {
+  id           String        @id @default(uuid())
+  name         String
+  email        String        @unique
+  password     String
+  role         Role          @default(USER)
+  status       String?
+  testimonials Testimonial[]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
